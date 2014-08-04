@@ -315,7 +315,10 @@
        (comma-join (map to-sql fields))))
 
 (defmethod format-clause :from [[_ tables] _]
-  (str "FROM " (comma-join (map to-sql tables))))
+  (case (count tables)
+    0  ""
+    1  (str "FROM " (to-sql (first tables)))
+    (str "FROM (" (comma-join (map to-sql tables)) ")")))
 
 (defmethod format-clause :where [[_ pred] _]
   (str "WHERE " (format-predicate* pred)))
